@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="UTF-8">
+<meta content="width=device-width,initial-scale=1.0" name="viewport">
+<title>Matriz de Habilidades — Qualidade | Gocase</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{color:#1a1a1a;background:#f5f0e8;min-height:100vh;font-family:Poppins,sans-serif;font-size:14px}
+.nav{z-index:100;background:#0059a9;align-items:center;height:50px;padding:0 20px;display:flex;position:sticky;top:0;gap:2px;overflow-x:auto}
+.nav-brand{color:#fff;margin-right:6px;font-size:15px;font-weight:900;white-space:nowrap;flex-shrink:0}
+.nav-badge{color:#0059a9;background:#d7db00;border-radius:50px;margin-right:12px;padding:3px 10px;font-size:10px;font-weight:800;white-space:nowrap;flex-shrink:0}
+.nav-tab{cursor:pointer;color:#fff9;background:0 0;border:none;border-bottom:3px solid #0000;height:50px;padding:0 12px;font-family:Poppins,sans-serif;font-size:11px;font-weight:700;white-space:nowrap;transition:color .15s;flex-shrink:0}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:#d7db00;border-bottom-color:#d7db00}
+.pane{display:none}.pane.active{display:block}
+.wrap{max-width:1200px;margin:0 auto;padding:24px}
+.page-header{border-bottom:3px solid #d7db00;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;display:flex;flex-wrap:wrap;gap:10px}
+.page-header-left{align-items:center;gap:10px;display:flex}
+.gg-dots{color:#d7db00;letter-spacing:4px;font-size:18px;font-weight:900}
+.page-title{color:#0059a9;font-size:20px;font-weight:800}
+.gg-badge{color:#0059a9;background:#d7db00;border-radius:50px;padding:3px 10px;font-size:10px;font-weight:800}
+.summary-grid{grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;display:grid}
+.summary-card{background:#fff;border-radius:14px;padding:16px 18px}
+.summary-label{letter-spacing:.1em;color:#999;text-transform:uppercase;margin-bottom:8px;font-size:10px;font-weight:800}
+.summary-value{color:#0059a9;font-size:28px;font-weight:900;line-height:1}
+.panel{background:#fff;border-radius:14px;padding:20px 22px;margin-bottom:18px}
+.panel-title{color:#1a1a1a;margin-bottom:14px;font-size:14px;font-weight:800}
+.panel-sub{color:#aaa;margin-bottom:14px;margin-top:-8px;font-size:12px}
+.charts-grid{grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;display:grid}
+.chart-card{background:#fff;border-radius:14px;padding:20px 22px}
+.chart-box{position:relative;height:280px}
+.add-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.add-row input,.add-row select{color:#1a1a1a;background:#fff;border:2px solid #e0d8cc;border-radius:12px;padding:9px 12px;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;flex:1;min-width:140px}
+.add-row input:focus{border-color:#0059a9;outline:none}
+.add-btn{color:#fff;cursor:pointer;background:#0059a9;border:none;border-radius:50px;padding:9px 22px;font-family:Poppins,sans-serif;font-size:12px;font-weight:800;white-space:nowrap}
+.add-btn:hover{background:#004d96}
+.add-btn.lima{background:#d7db00;color:#0059a9}
+.dif-check{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#666;background:#f5f0e8;border-radius:10px;padding:0 12px;white-space:nowrap}
+.dif-check input{width:15px;height:15px;accent-color:#0059a9;cursor:pointer}
+/* heatmap */
+.heat-wrap{overflow-x:auto;border-radius:12px;border:2px solid #e0d8cc}
+.heat-table{border-collapse:collapse;width:100%}
+.heat-table td{border-bottom:1px solid #f0ebe2;border-right:1px solid #f0ebe2;padding:0;text-align:center}
+.heat-table thead th{background:#0059a9;height:190px;padding:0;vertical-align:bottom;border-right:1px solid #ffffff22}
+.heat-rotate{position:relative;height:190px;width:34px}
+.heat-rotate span{position:absolute;bottom:8px;left:16px;transform:rotate(-45deg);transform-origin:left bottom;white-space:nowrap;color:#fff;font-size:11px;font-weight:700;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.heat-rotate .dif-star{position:absolute;top:6px;left:6px;color:#d7db00;font-size:11px}
+.heat-table th.col-nome,.heat-table td.col-nome{text-align:left;position:sticky;left:0;z-index:2;min-width:150px;padding:8px 10px;font-size:12px}
+.heat-table th.col-nome{background:#0059a9;color:#fff;font-weight:800;vertical-align:bottom;height:190px}
+.heat-table td.col-nome{background:#fff;font-weight:700;color:#0059a9}
+.heat-table td.col-media,.heat-table th.col-media{font-weight:800;background:#faf7f2;color:#0059a9;min-width:56px;font-size:12px}
+.heat-table th.col-media{color:#fff;background:#0059a9;vertical-align:bottom;height:190px;padding-bottom:8px}
+.heat-cell{width:34px;height:30px;font-size:11px;font-weight:800}
+.heat-table tr:last-child td{border-bottom:none}
+.heat-row-nome{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.heat-eval-btn{cursor:pointer;color:#0059a9;background:#eef5ff;border:none;border-radius:6px;padding:3px 8px;font-family:Poppins,sans-serif;font-size:10px;font-weight:800;white-space:nowrap}
+.heat-eval-btn:hover{background:#dcecff}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#666}
+.leg-sq{width:14px;height:14px;border-radius:4px;flex-shrink:0}
+/* ranking */
+.rank-row{border-bottom:1px solid #ece6da;align-items:center;gap:10px;padding:9px 0;display:flex}
+.rank-row:last-child{border-bottom:none}
+.rank-pos{min-width:22px;font-size:13px;font-weight:800;color:#888}
+.rank-name{color:#333;flex:1;font-size:13px;font-weight:600}
+.rank-track{background:#f0ebe2;border-radius:9px;flex:2;height:8px;overflow:hidden}
+.rank-fill{border-radius:9px;height:100%}
+.rank-pct{text-align:right;min-width:32px;font-size:13px;font-weight:800}
+.gap-row{border-bottom:1px solid #ece6da;padding:10px 0}
+.gap-row:last-child{border-bottom:none}
+.gap-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.gap-txt{font-size:13px;color:#333;font-weight:600;line-height:1.4;flex:1}
+.gap-val{font-size:14px;font-weight:800;flex-shrink:0}
+.gap-track{background:#f0ebe2;border-radius:9px;height:6px;overflow:hidden}
+.gap-fill{border-radius:9px;height:100%}
+/* avaliação */
+.card-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-nav-btn{cursor:pointer;color:#0059a9;background:#fff;border:2px solid #0059a9;border-radius:50px;padding:8px 18px;font-family:Poppins,sans-serif;font-size:12px;font-weight:800}
+.card-nav-btn:hover{background:#f0f6ff}
+.card-nav-btn:disabled{opacity:.35;cursor:default}
+.eval-card{background:#fff;border-radius:16px;padding:22px 24px}
+.eval-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.eval-avatar{width:46px;height:46px;border-radius:50%;background:#eef5ff;color:#0059a9;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0}
+.eval-nome{color:#0059a9;font-size:17px;font-weight:800}
+.eval-cargo{color:#999;font-size:12px}
+.eval-media{margin-left:auto;text-align:right}
+.eval-media-label{color:#999;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.eval-media-val{color:#0059a9;font-size:22px;font-weight:900}
+.eval-list{border-top:2px solid #f0ebe2;margin-top:14px;padding-top:6px}
+.eval-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #f5f0e8}
+.eval-item:last-child{border-bottom:none}
+.eval-item-txt{flex:1;font-size:13px;line-height:1.5;color:#333}
+.eval-select{flex-shrink:0;width:60px;border:none;border-radius:10px;padding:8px 4px;font-family:Poppins,sans-serif;font-size:13px;font-weight:800;text-align:center;cursor:pointer;appearance:none;text-align-last:center}
+.dif-badge{display:inline-block;background:#fffbea;color:#a4870a;border-radius:6px;padding:2px 7px;font-size:10px;font-weight:800;margin-bottom:4px;margin-right:4px}
+/* config */
+.comp-list-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.comp-list-row textarea{flex:1;resize:vertical;border:2px solid #e0d8cc;border-radius:12px;padding:8px 14px;font-family:Poppins,sans-serif;font-size:13px;min-height:38px;height:38px}
+.comp-list-row textarea:focus{border-color:#0059a9;outline:none}
+.comp-list-row textarea.editado{border-color:#d7db00}
+.comp-save-btn{color:#0059a9;cursor:pointer;background:#fff;border:2px solid #0059a9;border-radius:50px;padding:8px 16px;font-family:Poppins,sans-serif;font-size:11px;font-weight:800;white-space:nowrap;align-self:flex-start;margin-top:2px}
+.comp-save-btn:hover{background:#f0f6ff}
+.comp-save-btn:disabled{opacity:.4;cursor:default}
+.comp-list-del{cursor:pointer;color:#ddd;background:none;border:none;font-size:16px;padding:6px 2px;align-self:flex-start}
+.comp-list-del:hover{color:#e24b4a}
+.colab-list-row{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.colab-list-row input{border:2px solid #e0d8cc;border-radius:12px;padding:8px 12px;font-family:Poppins,sans-serif;font-size:13px}
+.colab-list-row input:focus{border-color:#0059a9;outline:none}
+.colab-list-row input.editado{border-color:#d7db00}
+.colab-list-row .nome-input{flex:2}
+.colab-list-row .cargo-input{flex:1}
+/* 9-box */
+.box9-select-layout{display:flex;gap:8px;align-items:stretch;margin-top:8px}
+.box9-y-label-v{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:800;color:#0059a9;text-align:center;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;padding:8px 4px;flex-shrink:0}
+.box9-select-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px}
+.box9-select-cell{border-radius:14px;padding:12px 12px 10px;cursor:pointer;border:3px solid transparent;transition:all .15s;position:relative}
+.box9-select-cell:hover{transform:translateY(-2px);box-shadow:0 6px 20px #0002}
+.box9-select-cell.selected{border-color:#0059a9;box-shadow:0 0 0 3px #0059a940}
+.box9-cell-num{font-size:9px;font-weight:800;color:#fff;background:#0006;border-radius:20px;display:inline-block;padding:1px 7px;margin-bottom:5px}
+.box9-cell-title{font-size:12px;font-weight:800;line-height:1.3;color:#1a1a1a;margin-bottom:5px}
+.box9-cell-what{font-size:11px;color:#444;line-height:1.4;margin-bottom:6px}
+.box9-cell-action{font-size:10px;font-weight:700;color:#0059a9;border-top:1px solid #0002;padding-top:5px}
+.box9-check-icon{position:absolute;top:8px;right:10px;font-size:16px;display:none;color:#0059a9}
+.box9-select-cell.selected .box9-check-icon{display:block}
+.box9-x-labels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 4px;margin-top:4px}
+.box9-x-label{font-size:10px;font-weight:800;color:#0059a9;text-align:center}
+.box9-x-axis{font-size:11px;font-weight:800;color:#0059a9;text-align:center;margin-top:4px;text-transform:uppercase}
+.hist-item{border:2px solid #f0ebe2;border-radius:14px;padding:14px 16px;margin-bottom:10px;position:relative}
+.hist-item:last-child{margin-bottom:0}
+.hist-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.hist-box-badge{border-radius:10px;padding:6px 12px;font-size:11px;font-weight:800;white-space:nowrap;flex-shrink:0}
+.hist-box-name{font-size:13px;font-weight:800;color:#0059a9;flex:1}
+.hist-date{font-size:10px;color:#aaa;font-weight:700}
+.hist-obs{font-size:12px;color:#555;line-height:1.5;margin-top:4px;padding:8px 10px;background:#f9f6f0;border-radius:8px}
+.hist-del-btn{position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;color:#ddd;font-size:14px;padding:2px 4px}
+.hist-del-btn:hover{color:#e24b4a}
+.leg-desc-card{border-radius:14px;padding:14px 16px}
+.leg-desc-num{font-size:10px;font-weight:800;color:#fff;background:#0006;border-radius:20px;display:inline-block;padding:1px 8px;margin-bottom:6px}
+.leg-desc-title{font-size:12px;font-weight:800;color:#1a1a1a;margin-bottom:4px}
+.leg-desc-what{font-size:11px;color:#444;line-height:1.5;margin-bottom:6px}
+.leg-desc-action{font-size:10px;font-weight:700;color:#0059a9;border-top:1px solid #0001;padding-top:6px}
+/* trilha */
+.trilha-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.trilha-tab{cursor:pointer;background:#fff;border:2px solid #e0d8cc;border-radius:50px;padding:8px 20px;font-family:Poppins,sans-serif;font-size:12px;font-weight:800;color:#555;transition:all .15s}
+.trilha-tab:hover{border-color:#0059a9;color:#0059a9}
+.trilha-tab.active{background:#0059a9;border-color:#0059a9;color:#fff}
+.nivel-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.nivel-badge{font-size:28px;font-weight:900;color:#fff;background:#0059a9;border-radius:16px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nivel-titulo{color:#0059a9;font-size:18px;font-weight:800;margin-bottom:4px}
+.nivel-desc{color:#777;font-size:13px;line-height:1.5}
+.nivel-edit-btn{cursor:pointer;background:none;border:2px solid #0059a9;border-radius:50px;padding:6px 16px;font-family:Poppins,sans-serif;font-size:11px;font-weight:800;color:#0059a9}
+.nivel-edit-btn:hover{background:#eef5ff}
+.cat-section{margin-bottom:18px}
+.cat-title{font-size:11px;font-weight:800;color:#0059a9;letter-spacing:.08em;text-transform:uppercase;border-left:3px solid #d7db00;padding-left:10px;margin-bottom:10px}
+.trilha-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f0ebe2}
+.trilha-item:last-child{border-bottom:none}
+.trilha-item-dot{width:8px;height:8px;border-radius:50%;background:#0059a9;flex-shrink:0;margin-top:4px}
+.trilha-item-txt{flex:1;font-size:13px;color:#333;line-height:1.5}
+.trilha-item-actions{display:flex;gap:6px;flex-shrink:0}
+.trilha-item-btn{cursor:pointer;background:none;border:none;font-size:13px;padding:2px 4px;opacity:.4}
+.trilha-item-btn:hover{opacity:1}
+.add-item-row{display:flex;gap:8px;align-items:flex-start;margin-top:10px;flex-wrap:wrap}
+.add-item-row select{border:2px solid #e0d8cc;border-radius:12px;padding:8px 10px;font-family:Poppins,sans-serif;font-size:12px;font-weight:600;background:#fff;min-width:160px}
+.add-item-row textarea{flex:1;min-width:200px;border:2px solid #e0d8cc;border-radius:12px;padding:8px 12px;font-family:Poppins,sans-serif;font-size:12px;resize:vertical;min-height:38px}
+/* modal nivel */
+.nivel-modal{display:none;position:fixed;inset:0;z-index:300;background:#0006;align-items:center;justify-content:center}
+.nivel-modal.open{display:flex}
+.nivel-modal-inner{background:#fff;border-radius:20px;padding:28px 26px;max-width:440px;width:90%;box-shadow:0 8px 40px #0003;position:relative}
+.nivel-modal-inner input,.nivel-modal-inner textarea{width:100%;border:2px solid #e0d8cc;border-radius:12px;padding:9px 12px;font-family:Poppins,sans-serif;font-size:13px;margin-bottom:12px;display:block}
+.nivel-modal-inner input:focus,.nivel-modal-inner textarea:focus{border-color:#0059a9;outline:none}
+.nivel-modal-inner textarea{resize:vertical;min-height:80px}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#aaa}
+.modal-close:hover{color:#e24b4a}
+/* misc */
+.empty-state{text-align:center;color:#aaa;padding:40px 20px;font-size:13px;font-weight:600}
+.loading{text-align:center;color:#888;padding:30px;font-size:13px;font-weight:600}
+.toast{color:#d7db00;opacity:0;pointer-events:none;z-index:200;background:#0059a9;border:2px solid #d7db00;border-radius:50px;padding:11px 22px;font-size:13px;font-weight:800;transition:opacity .25s;position:fixed;bottom:24px;left:50%;transform:translate(-50%)}
+.toast.show{opacity:1}
+@media(width<=768px){
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .charts-grid{grid-template-columns:1fr}
+  .wrap{padding:16px 12px}
+  .box9-select-grid{grid-template-columns:1fr}
+}
+</style>
+<body>
+<nav class="nav">
+  <span class="nav-brand">gogroup</span>
+  <span class="nav-badge">QUALIDADE</span>
+  <button class="nav-tab active" onclick="showTab('dashboard')">▦ Dashboard</button>
+  <button class="nav-tab" onclick="showTab('avaliacao')">✓ Avaliação</button>
+  <button class="nav-tab" onclick="showTab('novebox')">⊞ 9-Box</button>
+  <button class="nav-tab" onclick="showTab('trilha')">🚀 Trilha</button>
+  <button class="nav-tab" onclick="showTab('config')">⚙ Configurar</button>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="pane active" id="pane-dashboard"><div class="wrap">
+  <div class="page-header">
+    <div class="page-header-left"><span class="gg-dots">• • •</span><span class="page-title">Matriz de Habilidades — Qualidade</span></div>
+    <span class="gg-badge">GOCASE</span>
+  </div>
+  <div class="summary-grid">
+    <div class="summary-card"><div class="summary-label">Colaboradores</div><div class="summary-value" id="sm-colab">—</div></div>
+    <div class="summary-card"><div class="summary-label">Competências</div><div class="summary-value" id="sm-comp">—</div></div>
+    <div class="summary-card"><div class="summary-label">Média Geral</div><div class="summary-value" id="sm-media">—</div></div>
+    <div class="summary-card"><div class="summary-label">Nível 0</div><div class="summary-value" id="sm-zeros">—</div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card"><div class="panel-title">Média por setor</div><div class="panel-sub">Escala 0–4 (diferenciais como bônus)</div><div class="chart-box"><canvas id="chart-setores"></canvas></div></div>
+    <div class="chart-card"><div class="panel-title">Distribuição de níveis</div><div class="panel-sub">Quantas avaliações em cada nível</div><div class="chart-box"><canvas id="chart-niveis"></canvas></div></div>
+  </div>
+  <div class="panel"><div class="panel-title">Média por colaborador</div><div class="panel-sub">Comparativo visual</div><div class="chart-box" style="height:320px"><canvas id="chart-colaboradores"></canvas></div></div>
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:10px">
+      <div class="panel-title" style="margin-bottom:0">Heatmap da equipe</div>
+      <button class="add-btn" onclick="showTab('avaliacao')">✓ Avaliar colaboradores</button>
+    </div>
+    <div class="panel-sub">★ = diferencial (bônus, fora da contagem)</div>
+    <div id="heat-container"><div class="loading">Carregando...</div></div>
+    <div class="legend" id="legenda"></div>
+  </div>
+  <div class="panel"><div class="panel-title">Ranking de colaboradores</div><div class="panel-sub">Média geral ponderada</div><div id="ranking-colab"><div class="loading">Carregando...</div></div></div>
+  <div class="panel"><div class="panel-title">Oportunidades de treinamento</div><div class="panel-sub">Competências com menor média — maiores gaps</div><div id="ranking-gap"><div class="loading">Carregando...</div></div></div>
+</div></div>
+
+<!-- AVALIAÇÃO -->
+<div class="pane" id="pane-avaliacao"><div class="wrap">
+  <div class="page-header">
+    <div class="page-header-left"><span class="gg-dots">• • •</span><span class="page-title">Avaliação por Colaborador</span></div>
+    <span class="gg-badge">QUALIDADE</span>
+  </div>
+  <div id="eval-container"><div class="loading">Carregando...</div></div>
+</div></div>
+
+<!-- 9-BOX -->
+<div class="pane" id="pane-novebox"><div class="wrap">
+  <div class="page-header">
+    <div class="page-header-left"><span class="gg-dots">• • •</span><span class="page-title">Avaliação 9-Box</span></div>
+    <span class="gg-badge">PERFORMANCE × CULTURA</span>
+  </div>
+  <!-- Seletor de colaborador -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-title" style="margin-bottom:10px">Selecione o colaborador</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <select id="box9-colab-select" onchange="selecionarColab9box()" style="border:2px solid #e0d8cc;border-radius:12px;padding:10px 14px;font-family:Poppins,sans-serif;font-size:13px;font-weight:600;background:#fff;color:#333;flex:1;min-width:200px;max-width:360px">
+        <option value="">— Escolha um colaborador —</option>
+      </select>
+      <div id="box9-colab-badge" style="display:none"></div>
+    </div>
+  </div>
+  <!-- Área do colaborador selecionado -->
+  <div id="box9-colab-content" style="display:none">
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-title" style="margin-bottom:4px">Posicionar no 9-Box</div>
+      <div class="panel-sub">Clique no quadrante. Eixo X = Resultados & Performance · Eixo Y = Cultura & Comportamentos</div>
+      <div class="box9-select-layout">
+        <div class="box9-y-label-v">▲ Cultura e Comportamentos</div>
+        <div style="flex:1">
+          <div class="box9-select-grid" id="box9-select-grid"></div>
+          <div class="box9-x-labels"><div class="box9-x-label">Baixo</div><div class="box9-x-label">Médio</div><div class="box9-x-label">Alto</div></div>
+          <div class="box9-x-axis">▶ Resultados e Performance</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;border-top:2px solid #f0ebe2;padding-top:16px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px">
+          <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:6px">Observação / Plano de ação</div>
+          <textarea id="box9-obs-inline" placeholder="Contexto, pontos de desenvolvimento, metas..." style="width:100%;border:2px solid #e0d8cc;border-radius:12px;padding:9px 12px;font-family:Poppins,sans-serif;font-size:13px;resize:vertical;min-height:72px"></textarea>
+        </div>
+        <button onclick="salvar9boxInline()" style="background:#0059a9;color:#fff;border:none;border-radius:50px;padding:12px 28px;font-family:Poppins,sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;height:44px">Salvar avaliação</button>
+      </div>
+    </div>
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-title" style="margin-bottom:4px">Histórico de avaliações</div>
+      <div class="panel-sub">Registro cronológico de todas as avaliações 9-Box deste colaborador</div>
+      <div id="box9-historico-container"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+  <!-- Guia dos 9 boxes -->
+  <div class="panel">
+    <div class="panel-title" style="margin-bottom:14px">Guia dos 9 Boxes</div>
+    <div id="box9-legenda-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+  </div>
+</div></div>
+
+<!-- TRILHA -->
+<div class="pane" id="pane-trilha"><div class="wrap">
+  <div class="page-header">
+    <div class="page-header-left"><span class="gg-dots">• • •</span><span class="page-title">Trilha de Carreira</span></div>
+    <button class="add-btn lima" onclick="abrirModalNivel(null)" style="font-size:11px;padding:7px 18px">+ Novo Nível</button>
+  </div>
+  <div class="trilha-tabs" id="trilha-tabs"></div>
+  <div id="trilha-content"></div>
+</div></div>
+
+<!-- CONFIG -->
+<div class="pane" id="pane-config"><div class="wrap">
+  <div class="page-header">
+    <div class="page-header-left"><span class="gg-dots">• • •</span><span class="page-title">Configurar</span></div>
+    <span class="gg-badge">CADASTROS</span>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Adicionar colaborador</div>
+    <div class="add-row">
+      <input type="text" id="novo-colab-nome" placeholder="Nome do colaborador">
+      <input type="text" id="novo-colab-cargo" placeholder="Cargo/Função (opcional)">
+      <button class="add-btn" onclick="adicionarColaborador()">+ Adicionar</button>
+    </div>
+    <div style="margin-top:18px;padding-top:14px;border-top:2px solid #f0ebe2">
+      <div class="panel-title" style="margin-bottom:10px">Editar colaboradores</div>
+      <div id="colab-list-container"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Cadastrar setor</div>
+    <div class="add-row">
+      <input type="text" id="novo-setor-nome" placeholder="Nome do setor (ex: UV, Têxtil)">
+      <button class="add-btn" onclick="adicionarSetor()">+ Adicionar</button>
+    </div>
+    <div style="margin-top:18px;padding-top:14px;border-top:2px solid #f0ebe2">
+      <div class="panel-title" style="margin-bottom:10px">Editar setores</div>
+      <div id="setor-list-container"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Adicionar competência</div>
+    <div class="add-row">
+      <input type="text" id="nova-comp-nome" placeholder="Nome da competência">
+      <select id="nova-comp-setor"><option value="">Sem setor</option></select>
+      <label class="dif-check"><input type="checkbox" id="nova-comp-diferencial"> Diferencial</label>
+      <button class="add-btn lima" onclick="adicionarCompetencia()">+ Adicionar</button>
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:2px solid #f0ebe2">
+      <div style="font-size:11px;color:#888;font-weight:700;margin-bottom:8px">Importar várias de uma vez (uma por linha):</div>
+      <div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+        <select id="comp-bulk-setor"><option value="">Sem setor</option></select>
+        <label class="dif-check"><input type="checkbox" id="comp-bulk-diferencial"> Diferencial</label>
+      </div>
+      <textarea id="comp-bulk" placeholder="Cole aqui, uma competência por linha..." style="resize:vertical;width:100%;min-height:100px;border:2px solid #e0d8cc;border-radius:10px;padding:9px 12px;font-family:Poppins,sans-serif;font-size:12px;line-height:1.6"></textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px"><button class="add-btn lima" onclick="adicionarCompetenciasEmLote(this)">+ Importar todas</button></div>
+    </div>
+    <div style="margin-top:18px;padding-top:14px;border-top:2px solid #f0ebe2">
+      <div class="panel-title" style="margin-bottom:10px">Editar competências</div>
+      <div class="panel-sub" style="margin-top:-4px">Diferencial = fora da contagem da média, soma como bônus</div>
+      <div id="comp-list-container"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- Modal Nível -->
+<div class="nivel-modal" id="nivel-modal">
+  <div class="nivel-modal-inner">
+    <button class="modal-close" onclick="fecharModalNivel()">✕</button>
+    <div style="color:#0059a9;font-size:16px;font-weight:800;margin-bottom:14px" id="nivel-modal-titulo">Novo Nível</div>
+    <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:4px">Código (ex: N1, N2)</div>
+    <input type="text" id="nivel-modal-codigo" placeholder="N1">
+    <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:4px">Título</div>
+    <input type="text" id="nivel-modal-tituloinput" placeholder="Auxiliar de Qualidade N1">
+    <div style="font-size:11px;font-weight:800;color:#555;margin-bottom:4px">Descrição</div>
+    <textarea id="nivel-modal-desc" placeholder="Breve descrição do nível..."></textarea>
+    <button onclick="salvarNivel()" style="width:100%;background:#0059a9;color:#fff;border:none;border-radius:50px;padding:12px;font-family:Poppins,sans-serif;font-size:13px;font-weight:800;cursor:pointer">Salvar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ── Estado global ──────────────────────────────────────────────────────────────
+const NIVEL_COR  = {0:'#F8696B',1:'#FCAB6B',2:'#FFEB84',3:'#B4D67A',4:'#63BE7B'};
+const NIVEL_TXT  = {0:'#501313',1:'#5c3306',2:'#5c5306',3:'#294d17',4:'#173404'};
+const NIVEL_DESC = {0:'Não conhece',1:'Teórico / supervisão constante',2:'Supervisão ocasional',3:'Autonomia total',4:'Domina e treina outros'};
+const BONUS = 0.1;
+const TABS  = ['dashboard','avaliacao','novebox','trilha','config'];
+const SENHA_AVALIACAO = 'eva3516';
+const SENHA_NOVEBOX   = 'eva3516';
+
+let colaboradores=[], competencias=[], setores=[], notas={}, posicoes9box={}, niveis=[], itensTrilha=[];
+let evalIndex=0, avaliacaoDesbloqueada=false, noveboxDesbloqueado=false;
+let chartSetores, chartNiveis, chartColaboradores;
+let box9ColabSelecionado=null, box9CelulaSelected=null;
+let nivelModalId=null, trilhaActiveTab=null;
+
+const BOX9_DEF = [
+  {x:1,y:3,num:'Box 3',title:'Performance inconsistente com alta cultura',   cor:'#f8d7d7',descricao:'Forte alinhamento cultural mas entrega abaixo do esperado.',acao:'Plano de desenvolvimento técnico com acompanhamento próximo.'},
+  {x:2,y:3,num:'Box 6',title:'Referência cultural com performance adequada', cor:'#d7f0e0',descricao:'Referência em cultura e comportamento, com consistência nas entregas.',acao:'Pode estar pronto para um desafio maior em breve.'},
+  {x:3,y:3,num:'Box 9',title:'Estrela',                                       cor:'#b3e6c9',descricao:'Performance excepcional e vivência plena dos valores da empresa.',acao:'Reter e acelerar. Candidato a liderança ou projetos de alto impacto.'},
+  {x:1,y:2,num:'Box 2',title:'Cultura adequada com lacunas de performance',  cor:'#f8e6d7',descricao:'Bom alinhamento cultural mas com lacunas técnicas.',acao:'Plano de desenvolvimento técnico direcionado e acompanhamento próximo.'},
+  {x:2,y:2,num:'Box 5',title:'Mantenedor',                                    cor:'#fffbea',descricao:'Executa bem e cumpre o esperado de forma consistente.',acao:'Manter engajamento. Ideal para funções que exigem estabilidade.'},
+  {x:3,y:2,num:'Box 8',title:'Alta performance',                              cor:'#e8f4d7',descricao:'Entrega resultados de alto impacto e agrega valor ao negócio.',acao:'Pode estar pronto para desafio maior. Monitorar alinhamento cultural.'},
+  {x:1,y:1,num:'Box 1',title:'Insuficiente',                                  cor:'#ffd7d7',descricao:'Entregas e competências abaixo do esperado. Situação crítica.',acao:'Plano de desenvolvimento urgente para reverter em curto prazo.'},
+  {x:2,y:1,num:'Box 4',title:'Performance adequada com lacunas de cultura',  cor:'#fef0d7',descricao:'Entrega o esperado mas comportamentos desalinhados com a cultura.',acao:'Acompanhamento comportamental. Risco de impacto no time.'},
+  {x:3,y:1,num:'Box 7',title:'Alta performance com lacunas de cultura',      cor:'#f8e4cc',descricao:'Supera as entregas mas precisa elevar o alinhamento cultural.',acao:'Trabalhar cultura e comportamento. Alto risco se não tratado.'},
+];
+
+// ── Navegação ──────────────────────────────────────────────────────────────────
+function showTab(t){
+  if(t==='avaliacao' && !avaliacaoDesbloqueada){
+    const s=prompt('Senha para avaliação:'); if(s===null)return;
+    if(s.trim()!==SENHA_AVALIACAO){showToast('SENHA INCORRETA');return;}
+    avaliacaoDesbloqueada=true;
+  }
+  if(t==='novebox' && !noveboxDesbloqueado){
+    const s=prompt('Senha para o 9-Box:'); if(s===null)return;
+    if(s.trim()!==SENHA_NOVEBOX){showToast('SENHA INCORRETA');return;}
+    noveboxDesbloqueado=true;
+  }
+  document.querySelectorAll('.nav-tab').forEach((el,i)=>el.classList.toggle('active',TABS[i]===t));
+  document.querySelectorAll('.pane').forEach(el=>el.classList.remove('active'));
+  document.getElementById('pane-'+t).classList.add('active');
+  if(t==='novebox') renderNovebox();
+  if(t==='trilha')  renderTrilha();
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+function calcMedia(somaBase,qtdBase,bonus){ return Math.min(4,(qtdBase?somaBase/qtdBase:0)+bonus*BONUS); }
+function corMedia(m){ return m>=3?'#639922':m>=1.5?'#EF9F27':'#E24B4A'; }
+
+// ── Carregar dados ─────────────────────────────────────────────────────────────
+async function carregarTudo(){
+  // Limpar duplicatas da trilha (correção única)
+  fetch('/api/itens-trilha/limpar-duplicatas',{method:'POST'}).catch(()=>{});
+  const safe = url => fetch(url).then(r=>r.json()).catch(()=>null);
+  const [colabs,comps,notasList,setoresList,pos9,niv,itens]=await Promise.all([
+    safe('/api/colaboradores'),
+    safe('/api/competencias'),
+    safe('/api/notas'),
+    safe('/api/setores'),
+    safe('/api/9box'),
+    safe('/api/niveis'),
+    safe('/api/itens-trilha'),
+  ]);
+  colaboradores=colabs||[]; competencias=comps||[]; setores=setoresList||[];
+  niveis=niv||[]; itensTrilha=itens||[];
+  notas={}; (notasList||[]).forEach(n=>{notas[n.colaborador_id+'_'+n.competencia_id]=n.nota;});
+  posicoes9box={}; (pos9||[]).forEach(p=>{posicoes9box[p.colaborador_id]=p;});
+  if(evalIndex>=colaboradores.length) evalIndex=0;
+  renderDashboard(); renderLegenda(); renderEval();
+  renderColabList(); renderSetorList(); renderCompList();
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────────
+function renderLegenda(){
+  document.getElementById('legenda').innerHTML=[0,1,2,3,4].map(n=>
+    `<span class="leg-item"><span class="leg-sq" style="background:${NIVEL_COR[n]}"></span>${n} — ${NIVEL_DESC[n]}</span>`
+  ).join('')+'<span class="leg-item">★ Diferencial (bônus)</span>';
+}
+
+function renderDashboard(){
+  const el=document.getElementById('heat-container');
+  if(!colaboradores.length||!competencias.length){
+    el.innerHTML='<div class="empty-state">Cadastre colaboradores e competências em ⚙ Configurar.</div>';
+    document.getElementById('ranking-colab').innerHTML='';
+    document.getElementById('ranking-gap').innerHTML='';
+    document.getElementById('sm-colab').textContent=colaboradores.length;
+    document.getElementById('sm-comp').textContent=competencias.length;
+    document.getElementById('sm-media').textContent='—';
+    document.getElementById('sm-zeros').textContent='0';
+    return;
+  }
+  let somaGB=0,qtdGB=0,bonusGP=0,zeros=0;
+  const mColabs=[],mComps=[],dist=[0,0,0,0,0];
+
+  const thead=competencias.map(c=>`<th title="${(c.setor_nome?'['+c.setor_nome+'] ':'')+(c.eh_diferencial?'[Diferencial] ':'')+c.nome}"><div class="heat-rotate">${c.eh_diferencial?'<span class="dif-star">★</span>':''}<span>${c.nome}</span></div></th>`).join('');
+
+  const tbody=colaboradores.map((colab,idx)=>{
+    let sB=0,qB=0,bP=0;
+    const cells=competencias.map(comp=>{
+      const nota=notas[colab.id+'_'+comp.id]??0;
+      if(comp.eh_diferencial){bP+=nota;bonusGP+=nota;}else{sB+=nota;qB++;somaGB+=nota;qtdGB++;}
+      dist[nota]++; if(nota===0)zeros++;
+      return `<td class="heat-cell" style="background:${NIVEL_COR[nota]};color:${NIVEL_TXT[nota]}">${nota}</td>`;
+    }).join('');
+    const m=calcMedia(sB,qB,bP); mColabs.push({nome:colab.nome,media:m});
+    return `<tr><td class="col-nome"><div class="heat-row-nome"><span>${colab.nome}</span><button class="heat-eval-btn" onclick="irParaAvaliacao(${idx})">Avaliar</button></div></td>${cells}<td class="col-media">${m.toFixed(1)}</td></tr>`;
+  }).join('');
+
+  const tfoot=competencias.map(comp=>{
+    let soma=0; colaboradores.forEach(c=>{soma+=notas[c.id+'_'+comp.id]??0;});
+    const m=colaboradores.length?soma/colaboradores.length:0;
+    mComps.push({nome:comp.nome,media:m,setor_id:comp.setor_id,eh_diferencial:comp.eh_diferencial});
+    return `<td class="col-media">${m.toFixed(1)}</td>`;
+  }).join('');
+
+  const mGeral=calcMedia(somaGB,qtdGB,bonusGP);
+  el.innerHTML=`<div class="heat-wrap"><table class="heat-table"><thead><tr><th class="col-nome">Colaborador</th>${thead}<th class="col-media">Média</th></tr></thead><tbody>${tbody}<tr><td class="col-nome" style="font-weight:800">Equipe</td>${tfoot}<td class="col-media">${mGeral.toFixed(1)}</td></tr></tbody></table></div>`;
+
+  document.getElementById('sm-colab').textContent=colaboradores.length;
+  document.getElementById('sm-comp').textContent=competencias.length;
+  document.getElementById('sm-media').textContent=mGeral.toFixed(1);
+  document.getElementById('sm-zeros').textContent=zeros;
+
+  // Charts
+  const mSetor=setores.map(s=>{
+    const cs=mComps.filter(c=>c.setor_id===s.id);
+    const base=cs.filter(c=>!c.eh_diferencial), dif=cs.filter(c=>c.eh_diferencial);
+    return{nome:s.nome,media:calcMedia(base.reduce((a,c)=>a+c.media,0),base.length,dif.reduce((a,c)=>a+c.media,0)),ok:cs.length>0};
+  }).filter(s=>s.ok);
+  mSetor.sort((a,b)=>b.media-a.media);
+  const mColabSort=[...mColabs].sort((a,b)=>b.media-a.media);
+
+  const ff="Poppins,sans-serif";
+  if(chartSetores)chartSetores.destroy();
+  chartSetores=new Chart(document.getElementById('chart-setores'),{type:'bar',data:{labels:mSetor.map(s=>s.nome),datasets:[{data:mSetor.map(s=>s.media),backgroundColor:mSetor.map(s=>corMedia(s.media)),borderRadius:6,maxBarThickness:28}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{min:0,max:4,grid:{color:'#f0ebe2'},ticks:{font:{family:ff,size:11}}},y:{grid:{display:false},ticks:{font:{family:ff,size:11,weight:'600'},color:'#333'}}}}});
+  if(chartNiveis)chartNiveis.destroy();
+  chartNiveis=new Chart(document.getElementById('chart-niveis'),{type:'doughnut',data:{labels:[0,1,2,3,4].map(n=>n+' - '+NIVEL_DESC[n]),datasets:[{data:dist,backgroundColor:[0,1,2,3,4].map(n=>NIVEL_COR[n]),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{font:{family:ff,size:10},boxWidth:12,padding:10}}}}});
+  if(chartColaboradores)chartColaboradores.destroy();
+  chartColaboradores=new Chart(document.getElementById('chart-colaboradores'),{type:'bar',data:{labels:mColabSort.map(c=>c.nome),datasets:[{data:mColabSort.map(c=>c.media),backgroundColor:mColabSort.map(c=>corMedia(c.media)),borderRadius:6,maxBarThickness:40}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:4,grid:{color:'#f0ebe2'},ticks:{font:{family:ff,size:11}}},x:{grid:{display:false},ticks:{font:{family:ff,size:10,weight:'600'},color:'#333',maxRotation:40}}}}});
+
+  document.getElementById('ranking-colab').innerHTML=mColabSort.map((c,i)=>{
+    const pct=Math.round((c.media/4)*100),cor=corMedia(c.media);
+    return `<div class="rank-row"><span class="rank-pos">${i+1}º</span><span class="rank-name">${c.nome}</span><div class="rank-track"><div class="rank-fill" style="width:${pct}%;background:${cor}"></div></div><span class="rank-pct" style="color:${cor}">${c.media.toFixed(1)}</span></div>`;
+  }).join('');
+
+  const mCompSort=[...mComps].sort((a,b)=>a.media-b.media);
+  document.getElementById('ranking-gap').innerHTML=mCompSort.slice(0,8).map(c=>{
+    const pct=Math.round((c.media/4)*100),cor=corMedia(c.media);
+    const badge=c.eh_diferencial?'<span style="display:inline-block;background:#fffbea;color:#a4870a;border-radius:5px;padding:1px 6px;font-size:9px;font-weight:800;margin-left:6px">★ diferencial</span>':'';
+    return `<div class="gap-row"><div class="gap-top"><span class="gap-txt">${c.nome}${badge}</span><span class="gap-val" style="color:${cor}">${c.media.toFixed(1)}</span></div><div class="gap-track"><div class="gap-fill" style="width:${pct}%;background:${cor}"></div></div></div>`;
+  }).join('');
+}
+
+// ── Avaliação ──────────────────────────────────────────────────────────────────
+function renderEval(){
+  const el=document.getElementById('eval-container');
+  if(!colaboradores.length){el.innerHTML='<div class="empty-state">Nenhum colaborador cadastrado. Vá em ⚙ Configurar.</div>';return;}
+  if(!competencias.length){el.innerHTML='<div class="empty-state">Nenhuma competência cadastrada. Vá em ⚙ Configurar.</div>';return;}
+  const colab=colaboradores[evalIndex];
+  const ini=colab.nome.trim().split(/\s+/).slice(0,2).map(s=>s[0]).join('').toUpperCase();
+  const picker=colaboradores.map((c,i)=>`<option value="${i}" ${i===evalIndex?'selected':''}>${c.nome}</option>`).join('');
+  let sB=0,qB=0,bP=0;
+  const items=competencias.map(comp=>{
+    const nota=notas[colab.id+'_'+comp.id]??0;
+    if(comp.eh_diferencial)bP+=nota; else{sB+=nota;qB++;}
+    const opts=[0,1,2,3,4].map(n=>`<option value="${n}" ${n===nota?'selected':''}>${n}</option>`).join('');
+    const sb=comp.setor_nome?`<span style="display:inline-block;background:#eef5ff;color:#0059a9;border-radius:6px;padding:2px 7px;font-size:10px;font-weight:800;margin-bottom:4px">${comp.setor_nome}</span>`:'';
+    const db=comp.eh_diferencial?`<span class="dif-badge">★ Diferencial</span>`:'';
+    return `<div class="eval-item"><span class="eval-item-txt">${sb}${db}${(sb||db)?'<br>':''}${comp.nome}</span><select class="eval-select" style="background:${NIVEL_COR[nota]};color:${NIVEL_TXT[nota]}" onchange="salvarNota(${colab.id},${comp.id},this)">${opts}</select></div>`;
+  }).join('');
+  const media=calcMedia(sB,qB,bP).toFixed(1);
+  el.innerHTML=`<div class="card-nav"><button class="card-nav-btn" onclick="evalMover(-1)" ${evalIndex===0?'disabled':''}>← Anterior</button><select onchange="irParaAvaliacao(parseInt(this.value))" style="border:2px solid #e0d8cc;border-radius:50px;padding:8px 16px;font-family:Poppins,sans-serif;font-size:12px;font-weight:700;background:#fff;color:#0059a9;cursor:pointer;max-width:60%">${picker}</select><button class="card-nav-btn" onclick="evalMover(1)" ${evalIndex===colaboradores.length-1?'disabled':''}>Próximo →</button></div><div class="eval-card"><div class="eval-head"><div class="eval-avatar">${ini}</div><div><div class="eval-nome">${colab.nome}</div>${colab.cargo?'<div class="eval-cargo">'+colab.cargo+'</div>':''}</div><div class="eval-media"><div class="eval-media-label">Média</div><div class="eval-media-val">${media}</div></div></div><div class="eval-list">${items}</div></div>`;
+}
+
+function irParaAvaliacao(idx){evalIndex=idx;renderEval();showTab('avaliacao');}
+function evalMover(d){evalIndex=Math.max(0,Math.min(colaboradores.length-1,evalIndex+d));renderEval();}
+
+async function salvarNota(colabId,compId,sel){
+  const nota=parseInt(sel.value);
+  sel.style.background=NIVEL_COR[nota]; sel.style.color=NIVEL_TXT[nota];
+  notas[colabId+'_'+compId]=nota;
+  try{await fetch('/api/notas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({colaborador_id:colabId,competencia_id:compId,nota})});}
+  catch(e){showToast('ERRO AO SALVAR NOTA');}
+  renderEval(); renderDashboard();
+}
+
+// ── 9-Box ──────────────────────────────────────────────────────────────────────
+function renderNovebox(){
+  popularSelectColab9box();
+  renderLegenda9box();
+  if(box9ColabSelecionado){
+    document.getElementById('box9-colab-select').value=box9ColabSelecionado;
+    selecionarColab9box();
+  }
+}
+
+function popularSelectColab9box(){
+  const sel=document.getElementById('box9-colab-select');
+  if(!sel)return;
+  const prev=sel.value;
+  sel.innerHTML='<option value="">— Escolha um colaborador —</option>'+colaboradores.map(c=>`<option value="${c.id}">${c.nome}${c.cargo?' — '+c.cargo:''}</option>`).join('');
+  if(prev)sel.value=prev;
+}
+
+function selecionarColab9box(){
+  const id=parseInt(document.getElementById('box9-colab-select').value);
+  if(!id){document.getElementById('box9-colab-content').style.display='none';box9ColabSelecionado=null;return;}
+  box9ColabSelecionado=id;
+  const colab=colaboradores.find(c=>c.id===id);
+  const ini=colab.nome.trim().split(/\s+/).slice(0,2).map(s=>s[0]).join('').toUpperCase();
+  const badge=document.getElementById('box9-colab-badge');
+  badge.style.cssText='display:flex;align-items:center;gap:10px';
+  badge.innerHTML=`<div style="width:38px;height:38px;border-radius:50%;background:#0059a9;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">${ini}</div><div><div style="font-size:13px;font-weight:800;color:#0059a9">${colab.nome}</div>${colab.cargo?'<div style="font-size:11px;color:#999">'+colab.cargo+'</div>':''}</div>`;
+  document.getElementById('box9-colab-content').style.display='block';
+  const pos=posicoes9box[id];
+  box9CelulaSelected=pos?`${pos.eixo_x}_${pos.eixo_y}`:null;
+  document.getElementById('box9-obs-inline').value=pos?(pos.observacao||''):'';
+  renderGrid9boxSelect();
+  carregarHistorico9box(id);
+}
+
+function renderGrid9boxSelect(){
+  const grid=document.getElementById('box9-select-grid');
+  if(!grid)return;
+  const cells=[...BOX9_DEF].sort((a,b)=>b.y-a.y||a.x-b.x);
+  grid.innerHTML=cells.map(cell=>{
+    const key=`${cell.x}_${cell.y}`,sel=box9CelulaSelected===key;
+    return `<div class="box9-select-cell ${sel?'selected':''}" style="background:${cell.cor}" onclick="selecionarCelula9box('${key}')">
+      <span class="box9-check-icon">✓</span>
+      <div class="box9-cell-num">${cell.num}</div>
+      <div class="box9-cell-title">${cell.title}</div>
+      <div class="box9-cell-what">${cell.descricao}</div>
+      <div class="box9-cell-action">→ ${cell.acao}</div>
+    </div>`;
+  }).join('');
+}
+
+function selecionarCelula9box(key){box9CelulaSelected=key;renderGrid9boxSelect();}
+
+async function salvar9boxInline(){
+  if(!box9ColabSelecionado){showToast('SELECIONE UM COLABORADOR');return;}
+  if(!box9CelulaSelected){showToast('CLIQUE EM UM QUADRANTE DO GRID');return;}
+  const [x,y]=box9CelulaSelected.split('_').map(Number);
+  const obs=document.getElementById('box9-obs-inline').value.trim();
+  try{
+    await fetch('/api/9box',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({colaborador_id:box9ColabSelecionado,eixo_x:x,eixo_y:y,observacao:obs})});
+    posicoes9box[box9ColabSelecionado]={colaborador_id:box9ColabSelecionado,eixo_x:x,eixo_y:y,observacao:obs};
+    document.getElementById('box9-obs-inline').value='';
+    showToast('AVALIAÇÃO SALVA!');
+    carregarHistorico9box(box9ColabSelecionado);
+  }catch(e){showToast('ERRO AO SALVAR');}
+}
+
+async function carregarHistorico9box(colabId){
+  const el=document.getElementById('box9-historico-container');
+  if(!el)return;
+  el.innerHTML='<div class="loading">Carregando...</div>';
+  try{
+    const hist=await fetch('/api/9box/historico/'+colabId).then(r=>r.json());
+    if(!hist.length){el.innerHTML='<div class="empty-state">Nenhuma avaliação registrada ainda.</div>';return;}
+    el.innerHTML=hist.map(h=>{
+      const cell=BOX9_DEF.find(c=>c.x===h.eixo_x&&c.y===h.eixo_y);
+      const d=new Date(h.avaliado_em.replace(' ','T')+'Z');
+      const data=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      return `<div class="hist-item"><button class="hist-del-btn" onclick="excluirHistorico9box(${h.id})">✕</button><div class="hist-header"><div class="hist-box-badge" style="background:${cell?.cor||'#eee'}">${cell?.num||'?'}</div><div><div class="hist-box-name">${cell?.title||'—'}</div><div class="hist-date">📅 ${data}</div></div></div>${h.observacao?`<div class="hist-obs">💬 ${h.observacao}</div>`:''}</div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<div class="empty-state">Erro ao carregar.</div>';}
+}
+
+async function excluirHistorico9box(id){
+  if(!confirm('Remover este registro?'))return;
+  await fetch('/api/9box/historico/'+id,{method:'DELETE'});
+  showToast('REMOVIDO.'); carregarHistorico9box(box9ColabSelecionado);
+}
+
+function renderLegenda9box(){
+  const el=document.getElementById('box9-legenda-cards');
+  if(!el)return;
+  el.innerHTML=[...BOX9_DEF].sort((a,b)=>b.y-a.y||a.x-b.x).map(cell=>`<div class="leg-desc-card" style="background:${cell.cor}"><div class="leg-desc-num">${cell.num}</div><div class="leg-desc-title">${cell.title}</div><div class="leg-desc-what">${cell.descricao}</div><div class="leg-desc-action">→ ${cell.acao}</div></div>`).join('');
+}
+
+// ── Trilha ─────────────────────────────────────────────────────────────────────
+function renderTrilha(){
+  const tabsEl=document.getElementById('trilha-tabs');
+  const contentEl=document.getElementById('trilha-content');
+  if(!niveis.length){tabsEl.innerHTML='';contentEl.innerHTML='<div class="empty-state">Nenhum nível cadastrado. Clique em "+ Novo Nível".</div>';return;}
+  if(!trilhaActiveTab||!niveis.find(n=>n.id===trilhaActiveTab)) trilhaActiveTab=niveis[0].id;
+  tabsEl.innerHTML=niveis.map(n=>`<button class="trilha-tab ${n.id===trilhaActiveTab?'active':''}" onclick="setTrilhaTab(${n.id})">${n.codigo}</button>`).join('');
+  const nivel=niveis.find(n=>n.id===trilhaActiveTab);
+  if(!nivel)return;
+  const itensNivel=itensTrilha.filter(i=>i.nivel_id===nivel.id);
+  const cats=[...new Set(itensNivel.map(i=>i.categoria))];
+  const CATS_ORD=['Atividades do dia a dia','Conhecimentos necessários','Comportamentos esperados'];
+  const catsOrd=[...new Set([...CATS_ORD,...cats])].filter(c=>cats.includes(c));
+  const BADGE_COLORS=['#0059a9','#2e8b57','#8b5cf6'];
+  const bc=BADGE_COLORS[niveis.indexOf(nivel)%BADGE_COLORS.length];
+  const sections=catsOrd.map(cat=>{
+    const rows=itensNivel.filter(i=>i.categoria===cat).map(it=>`<div class="trilha-item"><div class="trilha-item-dot"></div><div class="trilha-item-txt">${it.descricao}</div><div class="trilha-item-actions"><button class="trilha-item-btn" onclick="editarItemTrilha(${it.id})" title="Editar">✏️</button><button class="trilha-item-btn" onclick="removerItemTrilha(${it.id})" title="Remover">✕</button></div></div>`).join('');
+    return rows?`<div class="cat-section"><div class="cat-title">${cat}</div>${rows}</div>`:'';
+  }).join('');
+  const catOpts=CATS_ORD.map(c=>`<option value="${c}">${c}</option>`).join('')+'<option value="__nova__">+ Nova categoria...</option>';
+  contentEl.innerHTML=`<div class="panel"><div class="nivel-header"><div class="nivel-badge" style="background:${bc}">${nivel.codigo}</div><div style="flex:1"><div class="nivel-titulo">${nivel.titulo}</div>${nivel.descricao?`<div class="nivel-desc">${nivel.descricao}</div>`:''}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="nivel-edit-btn" onclick="abrirModalNivel(${nivel.id})">✏️ Editar</button><button class="nivel-edit-btn" style="border-color:#e24b4a;color:#e24b4a" onclick="excluirNivel(${nivel.id})">🗑 Excluir</button></div></div>${sections||'<div class="empty-state" style="padding:20px 0">Nenhum item ainda.</div>'}<div style="border-top:2px solid #f0ebe2;padding-top:14px;margin-top:8px"><div class="panel-title" style="margin-bottom:10px">Adicionar item</div><div class="add-item-row"><select id="add-item-cat">${catOpts}</select><textarea id="add-item-txt" placeholder="Descreva a responsabilidade ou competência..." rows="2" style="border:2px solid #e0d8cc;border-radius:12px;padding:8px 12px;font-family:Poppins,sans-serif;font-size:12px;flex:1;min-width:200px;resize:vertical"></textarea><button class="add-btn lima" onclick="adicionarItemTrilha(${nivel.id})">+ Adicionar</button></div></div></div>`;
+}
+
+function setTrilhaTab(id){trilhaActiveTab=id;renderTrilha();}
+
+async function adicionarItemTrilha(nivelId){
+  const catSel=document.getElementById('add-item-cat');
+  let cat=catSel.value;
+  if(cat==='__nova__'){cat=prompt('Nome da nova categoria:');if(!cat?.trim()){showToast('INVÁLIDO');return;}cat=cat.trim();}
+  const txt=document.getElementById('add-item-txt').value.trim();
+  if(!txt){showToast('INFORME A DESCRIÇÃO');return;}
+  try{
+    await fetch('/api/itens-trilha',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nivel_id:nivelId,categoria:cat,descricao:txt})});
+    showToast('ITEM ADICIONADO!'); await carregarTudo(); renderTrilha();
+  }catch(e){showToast('ERRO');}
+}
+
+function editarItemTrilha(id){
+  const item=itensTrilha.find(i=>i.id===id);if(!item)return;
+  const novo=prompt('Editar:',item.descricao);if(novo===null||!novo.trim())return;
+  fetch('/api/itens-trilha/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({categoria:item.categoria,descricao:novo.trim()})})
+    .then(()=>{showToast('ATUALIZADO!');carregarTudo().then(()=>renderTrilha());});
+}
+
+async function removerItemTrilha(id){
+  if(!confirm('Remover este item?'))return;
+  await fetch('/api/itens-trilha/'+id,{method:'DELETE'});
+  showToast('REMOVIDO.'); await carregarTudo(); renderTrilha();
+}
+
+function abrirModalNivel(id){
+  nivelModalId=id;
+  const n=id?niveis.find(x=>x.id===id):null;
+  document.getElementById('nivel-modal-titulo').textContent=id?'Editar Nível':'Novo Nível';
+  document.getElementById('nivel-modal-codigo').value=n?n.codigo:'';
+  document.getElementById('nivel-modal-tituloinput').value=n?n.titulo:'';
+  document.getElementById('nivel-modal-desc').value=n?(n.descricao||''):'';;
+  document.getElementById('nivel-modal').classList.add('open');
+}
+function fecharModalNivel(){document.getElementById('nivel-modal').classList.remove('open');nivelModalId=null;}
+
+async function salvarNivel(){
+  const codigo=document.getElementById('nivel-modal-codigo').value.trim();
+  const titulo=document.getElementById('nivel-modal-tituloinput').value.trim();
+  const desc=document.getElementById('nivel-modal-desc').value.trim();
+  if(!codigo||!titulo){showToast('CÓDIGO E TÍTULO OBRIGATÓRIOS');return;}
+  try{
+    if(nivelModalId) await fetch('/api/niveis/'+nivelModalId,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo,titulo,descricao:desc})});
+    else await fetch('/api/niveis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codigo,titulo,descricao:desc})});
+    showToast(nivelModalId?'NÍVEL ATUALIZADO!':'NÍVEL CRIADO!');
+    fecharModalNivel(); await carregarTudo(); renderTrilha();
+  }catch(e){showToast('ERRO');}
+}
+
+async function excluirNivel(id){
+  const n=niveis.find(x=>x.id===id);
+  if(!confirm(`Excluir "${n?.titulo}"? Todos os itens serão removidos.`))return;
+  await fetch('/api/niveis/'+id,{method:'DELETE'});
+  showToast('NÍVEL EXCLUÍDO.'); trilhaActiveTab=null; await carregarTudo(); renderTrilha();
+}
+
+// ── Config ─────────────────────────────────────────────────────────────────────
+function popularSelectsSetor(){
+  const opts='<option value="">Sem setor</option>'+setores.map(s=>`<option value="${s.id}">${s.nome}</option>`).join('');
+  ['nova-comp-setor','comp-bulk-setor'].forEach(id=>{const el=document.getElementById(id);if(el){const v=el.value;el.innerHTML=opts;el.value=v;}});
+}
+
+async function adicionarColaborador(){
+  const n=document.getElementById('novo-colab-nome'),c=document.getElementById('novo-colab-cargo');
+  if(!n.value.trim()){showToast('INFORME O NOME');return;}
+  await fetch('/api/colaboradores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:n.value.trim(),cargo:c.value.trim()})});
+  n.value='';c.value='';showToast('ADICIONADO!');carregarTudo();
+}
+
+function renderColabList(){
+  const el=document.getElementById('colab-list-container');if(!el)return;
+  if(!colaboradores.length){el.innerHTML='<div style="color:#aaa;font-size:12px">Nenhum colaborador ainda.</div>';return;}
+  el.innerHTML=colaboradores.map(c=>`<div class="colab-list-row"><input type="text" class="nome-input" id="cn-${c.id}" value="${c.nome.replace(/"/g,'&quot;')}" oninput="markColab(${c.id})"><input type="text" class="cargo-input" id="cc-${c.id}" value="${(c.cargo||'').replace(/"/g,'&quot;')}" placeholder="Cargo" oninput="markColab(${c.id})"><button class="comp-save-btn" id="cs-${c.id}" disabled onclick="saveColab(${c.id})">Salvar</button><button class="comp-list-del" onclick="delColab(${c.id},'${c.nome.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
+}
+function markColab(id){const n=document.getElementById('cn-'+id),c=document.getElementById('cc-'+id),b=document.getElementById('cs-'+id),orig=colaboradores.find(x=>x.id===id);const m=orig&&(n.value.trim()!==orig.nome||c.value.trim()!==(orig.cargo||''));n.classList.toggle('editado',m);c.classList.toggle('editado',m);b.disabled=!m||!n.value.trim();}
+async function saveColab(id){const n=document.getElementById('cn-'+id).value.trim(),c=document.getElementById('cc-'+id).value.trim();if(!n)return;await fetch('/api/colaboradores/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:n,cargo:c})});showToast('ATUALIZADO!');carregarTudo();}
+async function delColab(id,nome){if(!confirm('Remover "'+nome+'"?'))return;await fetch('/api/colaboradores/'+id,{method:'DELETE'});showToast('REMOVIDO.');carregarTudo();}
+
+async function adicionarSetor(){
+  const el=document.getElementById('novo-setor-nome');if(!el.value.trim()){showToast('INFORME O NOME');return;}
+  await fetch('/api/setores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:el.value.trim()})});
+  el.value='';showToast('SETOR ADICIONADO!');carregarTudo();
+}
+function renderSetorList(){
+  popularSelectsSetor();
+  const el=document.getElementById('setor-list-container');if(!el)return;
+  if(!setores.length){el.innerHTML='<div style="color:#aaa;font-size:12px">Nenhum setor ainda.</div>';return;}
+  el.innerHTML=setores.map(s=>`<div class="colab-list-row"><input type="text" class="nome-input" id="sn-${s.id}" value="${s.nome.replace(/"/g,'&quot;')}" oninput="markSetor(${s.id})"><button class="comp-save-btn" id="ss-${s.id}" disabled onclick="saveSetor(${s.id})">Salvar</button><button class="comp-list-del" onclick="delSetor(${s.id},'${s.nome.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
+}
+function markSetor(id){const i=document.getElementById('sn-'+id),b=document.getElementById('ss-'+id),orig=setores.find(s=>s.id===id);const m=orig&&i.value.trim()!==orig.nome;i.classList.toggle('editado',m);b.disabled=!m||!i.value.trim();}
+async function saveSetor(id){const n=document.getElementById('sn-'+id).value.trim();if(!n)return;await fetch('/api/setores/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:n})});showToast('ATUALIZADO!');carregarTudo();}
+async function delSetor(id,nome){if(!confirm('Remover "'+nome+'"?'))return;await fetch('/api/setores/'+id,{method:'DELETE'});showToast('REMOVIDO.');carregarTudo();}
+
+async function adicionarCompetencia(){
+  const n=document.getElementById('nova-comp-nome'),s=document.getElementById('nova-comp-setor'),d=document.getElementById('nova-comp-diferencial');
+  if(!n.value.trim()){showToast('INFORME O NOME');return;}
+  await fetch('/api/competencias',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:n.value.trim(),setor_id:s.value?parseInt(s.value):null,eh_diferencial:d.checked})});
+  n.value='';d.checked=false;showToast('ADICIONADO!');carregarTudo();
+}
+async function adicionarCompetenciasEmLote(btn){
+  const el=document.getElementById('comp-bulk'),s=document.getElementById('comp-bulk-setor'),d=document.getElementById('comp-bulk-diferencial');
+  const linhas=el.value.split('\n').map(l=>l.trim()).filter(l=>l);
+  if(!linhas.length){showToast('NADA ENCONTRADO');return;}
+  btn.disabled=true;btn.textContent='Importando...';
+  for(const nome of linhas) await fetch('/api/competencias',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,setor_id:s.value?parseInt(s.value):null,eh_diferencial:d.checked})});
+  el.value='';d.checked=false;showToast(linhas.length+' ADICIONADAS!');btn.disabled=false;btn.textContent='+ Importar todas';carregarTudo();
+}
+function renderCompList(){
+  const el=document.getElementById('comp-list-container');if(!el)return;
+  if(!competencias.length){el.innerHTML='<div style="color:#aaa;font-size:12px">Nenhuma competência ainda.</div>';return;}
+  el.innerHTML=competencias.map(c=>`<div class="comp-list-row"><textarea id="cl-${c.id}" rows="1" oninput="markComp(${c.id})">${c.nome.replace(/</g,'&lt;')}</textarea><select id="cls-${c.id}" style="border:2px solid #e0d8cc;border-radius:12px;padding:8px 10px;font-family:Poppins,sans-serif;font-size:12px;background:#fff;min-width:130px;align-self:flex-start" onchange="markComp(${c.id})"><option value="" ${!c.setor_id?'selected':''}>Sem setor</option>${setores.map(s=>`<option value="${s.id}" ${s.id===c.setor_id?'selected':''}>${s.nome}</option>`).join('')}</select><label class="dif-check" style="align-self:center"><input type="checkbox" id="cld-${c.id}" ${c.eh_diferencial?'checked':''} onchange="markComp(${c.id})"> Diferencial</label><button class="comp-save-btn" id="clb-${c.id}" disabled onclick="saveComp(${c.id})">Salvar</button><button class="comp-list-del" onclick="delComp(${c.id},'${c.nome.replace(/'/g,"\\'")}')">✕</button></div>`).join('');
+}
+function markComp(id){const t=document.getElementById('cl-'+id),s=document.getElementById('cls-'+id),d=document.getElementById('cld-'+id),b=document.getElementById('clb-'+id),orig=competencias.find(c=>c.id===id);const m=orig&&(t.value.trim()!==orig.nome||(s.value?parseInt(s.value):null)!==(orig.setor_id||null)||d.checked!==!!orig.eh_diferencial);t.classList.toggle('editado',m);b.disabled=!m||!t.value.trim();}
+async function saveComp(id){const t=document.getElementById('cl-'+id),s=document.getElementById('cls-'+id),d=document.getElementById('cld-'+id);if(!t.value.trim())return;await fetch('/api/competencias/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:t.value.trim(),setor_id:s.value?parseInt(s.value):null,eh_diferencial:d.checked})});showToast('ATUALIZADO!');carregarTudo();}
+async function delComp(id,nome){if(!confirm('Remover "'+nome+'"?'))return;await fetch('/api/competencias/'+id,{method:'DELETE'});showToast('REMOVIDO.');carregarTudo();}
+
+carregarTudo();
+</script>
+</html>
